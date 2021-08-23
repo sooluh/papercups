@@ -70,6 +70,11 @@ class Client extends BaseClient
     private $twilio;
 
     /**
+     * @var Webhook
+     */
+    private $webhook;
+
+    /**
      * Method to be called before the function runs
      */
     protected function setUp()
@@ -86,6 +91,7 @@ class Client extends BaseClient
         $this->slack = new Slack();
         $this->gmail = new Gmail();
         $this->twilio = new Twilio();
+        $this->webhook = new Webhook();
     }
 
     /**
@@ -212,5 +218,14 @@ class Client extends BaseClient
     public function twilio(): Twilio
     {
         return $this->twilio;
+    }
+
+    /**
+     * Subscribe to Papercups events
+     * @return Webhook
+     */
+    public function webhook(): Webhook
+    {
+        return $this->webhook;
     }
 }

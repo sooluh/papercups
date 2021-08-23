@@ -2,8 +2,6 @@
 
 namespace Papercups;
 
-use ReflectionFunction;
-
 class Webhook extends BaseClient
 {
     private $availableEvent = [
@@ -16,20 +14,17 @@ class Webhook extends BaseClient
     /**
      * Register webhook events
      * @param string $event
-     * @param Closure $callback
+     * @param callable $callback
      * @throws Exception
      * @return void
      */
-    public function on(string $event, \Closure $callback)
+    public function on(string $event, callable $callback)
     {
-        $reflection = new ReflectionFunction($callback);
-        $arguments = $reflection->getParameters();
-
         if (!in_array($event, $this->availableEvent)) {
             throw new \Exception('The event you entered is not supported or does not even exist');
         }
 
-        if (!is_callable($callback) || count($arguments) !== 1) {
+        if (!is_callable($callback)) {
             throw new \Exception('Your callback function is invalid');
         }
 
@@ -53,12 +48,16 @@ class Webhook extends BaseClient
         $event = $data->event;
         $payload = $data->payload;
 
+        if (!in_array($event, array_keys($this->events))) {
+            return;
+        }
+
         if ($event === 'webhook:verify') {
             if (ob_get_contents() || ob_get_length() > 0) {
                 ob_end_clean();
             }
 
-            header('Content-Type: application/json');
+            header('Content-Type', 'application/json');
             echo json_encode([
                 'challenge' => $payload
             ]);
@@ -69,8 +68,6 @@ class Webhook extends BaseClient
             return $data;
         }
 
-        if (in_array($event, array_keys($this->events))) {
-            $this->events[$event]($payload);
-        }
+        $this->events[$event]($payload);
     }
 }
