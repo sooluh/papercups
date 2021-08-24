@@ -5,11 +5,29 @@ namespace Papercups;
 class Webhook extends BaseClient
 {
     private $availableEvent = [
+        'webhook:verify',
         'message:created',
         'conversation:created',
         'conversation:updated'
     ];
     private $events = [];
+
+    /**
+     * Method to be called before the function runs
+     */
+    public function setUp()
+    {
+        $this->on('webhook:verify', function ($payload) {
+            if (ob_get_contents() || ob_get_length() > 0) {
+                ob_end_clean();
+            }
+
+            header('Content-Type', 'application/json');
+            echo json_encode([
+                'challenge' => $payload
+            ]);
+        });
+    }
 
     /**
      * Register webhook events
@@ -52,22 +70,14 @@ class Webhook extends BaseClient
             return;
         }
 
-        if ($event === 'webhook:verify') {
-            if (ob_get_contents() || ob_get_length() > 0) {
-                ob_end_clean();
-            }
-
-            header('Content-Type', 'application/json');
-            echo json_encode([
-                'challenge' => $payload
-            ]);
-            return;
-        }
-
         if ($return === true) {
             return $data;
         }
 
-        $this->events[$event]($payload);
+        if (is_array($payload)) {
+            call_user_func_array($this->events[$event], $payload);
+        } else {
+            call_user_func($this->events[$event], $payload);
+        }
     }
 }
