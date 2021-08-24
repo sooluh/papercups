@@ -9,7 +9,7 @@ class BaseClient
     /**
      * @var string
      */
-    private $token;
+    protected $token;
 
     /**
      * @var Client
