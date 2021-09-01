@@ -9,12 +9,12 @@ class BaseClient
     /**
      * @var string
      */
-    protected $token;
+    protected static $token;
 
     /**
      * @var Client
      */
-    private $client;
+    private static $client;
 
     /**
      * Initiate class
@@ -27,16 +27,16 @@ class BaseClient
             ob_start();
         }
 
-        $token = $token ?: getenv('PAPERCUPS_API_KEY');
+        $token = self::$token ?: ($token ?: getenv('PAPERCUPS_API_KEY'));
         if (empty($token)) {
             throw new \Exception('API Key must be configured, or set a value in environment variable');
         }
-        $this->token = $token;
+        self::$token = $token;
 
         $base_uri = [$host, 'api', 'v1', ''];
         $base_uri = implode('/', $base_uri);
 
-        $this->client = new Client([
+        self::$client = new Client([
             'http_errors' => false,
             'base_uri' => $base_uri
         ]);
@@ -48,6 +48,7 @@ class BaseClient
 
     /**
      * Method to be called before the function runs
+     * @return mixed
      */
     protected function setUp()
     {
@@ -61,9 +62,9 @@ class BaseClient
      */
     protected function get(string $endpoint, array $query = [])
     {
-        $result = $this->client->get($endpoint, [
+        $result = self::$client->get($endpoint, [
             'headers' => [
-                'Authorization' => 'Bearer ' . $this->token,
+                'Authorization' => 'Bearer ' . self::$token,
                 'Accept' => 'application/json'
             ],
             'query' => $query
@@ -81,9 +82,9 @@ class BaseClient
      */
     protected function post(string $endpoint, array $body = [])
     {
-        $result = $this->client->post($endpoint, [
+        $result = self::$client->post($endpoint, [
             'headers' => [
-                'Authorization' => 'Bearer ' . $this->token,
+                'Authorization' => 'Bearer ' . self::$token,
                 'Accept' => 'application/json'
             ],
             'json' => $body
@@ -101,9 +102,9 @@ class BaseClient
      */
     protected function put(string $endpoint, array $body = [])
     {
-        $result = $this->client->put($endpoint, [
+        $result = self::$client->put($endpoint, [
             'headers' => [
-                'Authorization' => 'Bearer ' . $this->token,
+                'Authorization' => 'Bearer ' . self::$token,
                 'Accept' => 'application/json'
             ],
             'json' => $body
@@ -120,9 +121,9 @@ class BaseClient
      */
     protected function delete(string $endpoint)
     {
-        $result = $this->client->delete($endpoint, [
+        $result = self::$client->delete($endpoint, [
             'headers' => [
-                'Authorization' => 'Bearer ' . $this->token,
+                'Authorization' => 'Bearer ' . self::$token,
                 'Accept' => 'application/json'
             ]
         ]);

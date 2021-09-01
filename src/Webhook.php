@@ -4,29 +4,45 @@ namespace Papercups;
 
 class Webhook extends BaseClient
 {
-    private $availableEvent = [
+    private static $availableEvent = [
         'webhook:verify',
         'message:created',
         'conversation:created',
         'conversation:updated'
     ];
-    private $events = [];
+    private static $events = [];
 
     /**
      * Method to be called before the function runs
+     * @return void
      */
     public function setUp()
     {
-        $this->on('webhook:verify', function ($payload) {
-            if (ob_get_contents() || ob_get_length() > 0) {
-                ob_end_clean();
-            }
+        $self = $this;
 
-            header('Content-Type', 'application/json');
-            echo json_encode([
+        $this->on('webhook:verify', function ($payload, $action) use ($self) {
+            return $self->sendJSON([
                 'challenge' => $payload
             ]);
         });
+    }
+
+    /**
+     * Private method to return response as JSON
+     * @param mixed $body
+     * @return void
+     */
+    private function sendJSON($body)
+    {
+        if (ob_get_contents() || ob_get_length() > 0) {
+            ob_end_clean();
+        }
+
+        header('Content-Type: application/json');
+        echo json_encode($body);
+
+        // k.o.
+        die();
     }
 
     /**
@@ -38,7 +54,7 @@ class Webhook extends BaseClient
      */
     public function on(string $event, callable $callback)
     {
-        if (!in_array($event, $this->availableEvent)) {
+        if (!in_array($event, self::$availableEvent)) {
             throw new \Exception('The event you entered is not supported or does not even exist');
         }
 
@@ -46,19 +62,18 @@ class Webhook extends BaseClient
             throw new \Exception('Your callback function is invalid');
         }
 
-        if (in_array($event, $this->events)) {
+        if (in_array($event, self::$events)) {
             throw new \Exception("The '$event' event webhook has been registered before");
         }
 
-        $this->events[$event] = $callback;
+        self::$events[$event] = $callback;
     }
 
     /**
      * Listen to Papercups requests
-     * @param boolean $return
-     * @return mixed
+     * @return void
      */
-    public function listen(bool $return = false)
+    public function listen()
     {
         $input = file_get_contents('php://input');
         $data = json_decode($input);
@@ -66,18 +81,14 @@ class Webhook extends BaseClient
         $event = $data->event;
         $payload = $data->payload;
 
-        if (!in_array($event, array_keys($this->events))) {
-            return;
+        if (!in_array($event, array_keys(self::$events))) {
+            return $this->sendJSON([
+                'ok' => false
+            ]);
         }
 
-        if ($return === true) {
-            return $data;
-        }
-
-        if (is_array($payload)) {
-            call_user_func_array($this->events[$event], $payload);
-        } else {
-            call_user_func($this->events[$event], $payload);
-        }
+        // TODO: variable for actions like reply, close, delete, etc.
+        $action = null;
+        call_user_func(self::$events[$event], $payload, $action);
     }
 }

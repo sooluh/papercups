@@ -76,24 +76,23 @@ class Client extends BaseClient
 
     /**
      * Method to be called before the function runs
+     * @return void
      */
     protected function setUp()
     {
-        $token = $this->token;
-
-        $this->users = new Users($token);
-        $this->conversations = new Conversations($token);
-        $this->customers = new Customers($token);
-        $this->messages = new Messages($token);
-        $this->tags = new Tags($token);
-        $this->issues = new Issues($token);
-        $this->notes = new Notes($token);
-        $this->companies = new Companies($token);
-        $this->github = new Github($token);
-        $this->slack = new Slack($token);
-        $this->gmail = new Gmail($token);
-        $this->twilio = new Twilio($token);
-        $this->webhook = new Webhook($token);
+        $this->users = new Users();
+        $this->conversations = new Conversations();
+        $this->customers = new Customers();
+        $this->messages = new Messages();
+        $this->tags = new Tags();
+        $this->issues = new Issues();
+        $this->notes = new Notes();
+        $this->companies = new Companies();
+        $this->github = new Github();
+        $this->slack = new Slack();
+        $this->gmail = new Gmail();
+        $this->twilio = new Twilio();
+        $this->webhook = new Webhook();
     }
 
     /**
