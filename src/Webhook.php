@@ -4,13 +4,25 @@ namespace Papercups;
 
 class Webhook extends BaseClient
 {
+    /**
+     * @var array
+     */
     private static $availableEvent = [
         'webhook:verify',
         'message:created',
         'conversation:created',
         'conversation:updated'
     ];
+
+    /**
+     * @var array
+     */
     private static $events = [];
+
+    /**
+     * @var Actions
+     */
+    private $actions;
 
     /**
      * Method to be called before the function runs
@@ -19,8 +31,11 @@ class Webhook extends BaseClient
     public function setUp()
     {
         $self = $this;
+        $this->actions = new Actions();
 
-        $this->on('webhook:verify', function ($payload, $action) use ($self) {
+        // we have created the verification
+        // event by default
+        $this->on('webhook:verify', function ($payload, $actions) use ($self) {
             return $self->sendJSON([
                 'challenge' => $payload
             ]);
@@ -88,7 +103,10 @@ class Webhook extends BaseClient
         }
 
         // TODO: variable for actions like reply, close, delete, etc.
-        $action = null;
-        call_user_func(self::$events[$event], $payload, $action);
+        $actions = $this->actions;
+        $actions->setRequest($event, $payload);
+
+        $result = call_user_func(self::$events[$event], $payload, $actions);
+        return $this->sendJSON($result);
     }
 }
