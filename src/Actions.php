@@ -66,7 +66,7 @@ class Actions extends BaseClient
      */
     public function reply(string $message, string $type)
     {
-        if (isset($this->id)) {
+        if (empty($this->id)) {
             return null;
         }
 
