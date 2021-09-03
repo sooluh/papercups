@@ -25,11 +25,11 @@ class Users extends BaseClient
 
     /**
      * Method to retrieve spesific user on your team
-     * @param int $id
+     * @param string $id
      * @param array $query
      * @return mixed
      */
-    public function retrieve(int $id, array $query = [])
+    public function retrieve(string $id, array $query = [])
     {
         $endpoint = ['users', $id];
         $endpoint = implode('/', $endpoint);

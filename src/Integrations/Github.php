@@ -14,7 +14,7 @@ class Github
              * @param array $query
              * @return mixed
              */
-            public function list($query)
+            public function list(array $query)
             {
                 return $this->get('github/issues', $query);
             }
@@ -23,7 +23,7 @@ class Github
              * @param array $params
              * @return mixed
              */
-            public function create($params)
+            public function create(array $params)
             {
                 return $this->post('github/issues', $params);
             }
@@ -38,7 +38,7 @@ class Github
              * @param array $query
              * @return mixed
              */
-            public function list($query)
+            public function list(array $query)
             {
                 return $this->get('github/repos', $query);
             }

@@ -16,11 +16,11 @@ class Customers extends BaseClient
 
     /**
      * Method to retrieve a spesific customer
-     * @param int $id
+     * @param string $id
      * @param array $query
      * @return mixed
      */
-    public function retrieve(int $id, array $query = [])
+    public function retrieve(string $id, array $query = [])
     {
         $endpoint = ['customers', $id];
         $endpoint = implode('/', $endpoint);
@@ -42,11 +42,11 @@ class Customers extends BaseClient
 
     /**
      * Method to update a customer
-     * @param int $id
+     * @param string $id
      * @param array $updates
      * @return mixed
      */
-    public function update(int $id, array $updates)
+    public function update(string $id, array $updates)
     {
         $endpoint = ['customers', $id];
         $endpoint = implode('/', $endpoint);
@@ -58,10 +58,10 @@ class Customers extends BaseClient
 
     /**
      * Method to delete a customer
-     * @param int $id
+     * @param string $id
      * @return mixed
      */
-    public function destroy(int $id)
+    public function destroy(string $id)
     {
         $endpoint = ['customers', $id];
         $endpoint = implode('/', $endpoint);

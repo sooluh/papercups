@@ -16,11 +16,11 @@ class Tags extends BaseClient
 
     /**
      * Method to retrieve a spesific tag
-     * @param int $id
+     * @param string $id
      * @param array $query
      * @return mixed
      */
-    public function retrieve(int $id, array $query = [])
+    public function retrieve(string $id, array $query = [])
     {
         $endpoint = ['tags', $id];
         $endpoint = implode('/', $endpoint);
@@ -42,10 +42,10 @@ class Tags extends BaseClient
 
     /**
      * Method to delete a tag
-     * @param int $id
+     * @param string $id
      * @return mixed
      */
-    public function destroy(int $id)
+    public function destroy(string $id)
     {
         $endpoint = ['tags', $id];
         $endpoint = implode('/', $endpoint);

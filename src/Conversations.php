@@ -16,11 +16,11 @@ class Conversations extends BaseClient
 
     /**
      * Method to retrieve a spesific conversation
-     * @param int $id
+     * @param string $id
      * @param array $query
      * @return mixed
      */
-    public function retrieve(int $id, array $query = [])
+    public function retrieve(string $id, array $query = [])
     {
         $endpoint = ['conversations', $id];
         $endpoint = implode('/', $endpoint);
@@ -42,11 +42,11 @@ class Conversations extends BaseClient
 
     /**
      * Method to update a conversation
-     * @param int $id
+     * @param string $id
      * @param array $updates
      * @return mixed
      */
-    public function update(int $id, array $updates)
+    public function update(string $id, array $updates)
     {
         $endpoint = ['conversations', $id];
         $endpoint = implode('/', $endpoint);
@@ -58,10 +58,10 @@ class Conversations extends BaseClient
 
     /**
      * Method to delete a conversation
-     * @param int $id
+     * @param string $id
      * @return mixed
      */
-    public function destroy(int $id)
+    public function destroy(string $id)
     {
         $endpoint = ['conversations', $id];
         $endpoint = implode('/', $endpoint);
