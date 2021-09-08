@@ -240,31 +240,36 @@ class Client extends BaseClient
 
     /**
      * Upload file to Papercups
-     * @param string $account
-     * @param int $user
+     * @param array $account
      * @param string $filename
      * @param string $path
      * @param string $mimetype
      * @return mixed
      */
-    public function upload($account, $user, $filename, $path, $mimetype = null)
+    public function upload($account, $filename, $path, $mimetype = null)
     {
         if ($mimetype === null) {
             $mimetype = $this->mimetype->detectMimeTypeFromPath($path);
         }
 
-        $multipart = [
+        return $this->multipart('upload', [
+            [
+                'name' => 'account_id',
+                'contents' => $account['account_id']
+            ],
+            [
+                'name' => 'user_id',
+                'contents' => $account['user_id']
+            ],
             [
                 'name' => 'file',
                 'filename' => $filename,
                 'Mime-Type' => $mimetype,
-                'content' => fopen($path, 'r')
+                'contents' => fopen($path, 'r'),
+                'headers' => [
+                    'Content-Type' => $mimetype
+                ]
             ]
-        ];
-
-        return $this->multipart('upload', [
-            'account_id' => $account,
-            'user_id' => $user
-        ], $multipart);
+        ]);
     }
 }

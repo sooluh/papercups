@@ -166,22 +166,21 @@ class BaseClient
      * Method for uploading files to Papercups APIs
      * @param string $endpoint
      * @param array $body
-     * @param array $file
      * @return mixed
      */
-    protected function multipart(string $endpoint, array $body = [], array $file = [])
+    protected function multipart(string $endpoint, array $body = [])
     {
-        if (count($file) <= 0) {
+        if (count($body) <= 0) {
             return null;
         }
 
         $result = self::$client->post($endpoint, [
             'headers' => [
+                'X-Requested-With' => 'XMLHttpRequest',
                 'Authorization' => 'Bearer ' . self::$token,
                 'Accept' => 'application/json'
             ],
-            'json' => $body,
-            'multipart' => $file
+            'multipart' => $body
         ]);
 
         $json = $result->getBody()->getContents();
