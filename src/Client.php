@@ -2,6 +2,7 @@
 
 namespace Papercups;
 
+use League\MimeTypeDetection\FinfoMimeTypeDetector;
 use Papercups\Integrations\Github;
 use Papercups\Integrations\Slack;
 use Papercups\Integrations\Gmail;
@@ -75,6 +76,11 @@ class Client extends BaseClient
     private $webhook;
 
     /**
+     * @var FinfoMimeTypeDetector
+     */
+    private $mimetype;
+
+    /**
      * Method to be called before the function runs
      * @return void
      */
@@ -93,6 +99,8 @@ class Client extends BaseClient
         $this->gmail = new Gmail();
         $this->twilio = new Twilio();
         $this->webhook = new Webhook();
+
+        $this->mimetype = new FinfoMimeTypeDetector();
     }
 
     /**
@@ -228,5 +236,35 @@ class Client extends BaseClient
     public function webhook(): Webhook
     {
         return $this->webhook;
+    }
+
+    /**
+     * Upload file to Papercups
+     * @param string $account
+     * @param int $user
+     * @param string $filename
+     * @param string $path
+     * @param string $mimetype
+     * @return mixed
+     */
+    public function upload($account, $user, $filename, $path, $mimetype = null)
+    {
+        if ($mimetype === null) {
+            $mimetype = $this->mimetype->detectMimeTypeFromPath($path);
+        }
+
+        $multipart = [
+            [
+                'name' => 'file',
+                'filename' => $filename,
+                'Mime-Type' => $mimetype,
+                'content' => fopen($path, 'r')
+            ]
+        ];
+
+        return $this->multipart('upload', [
+            'account_id' => $account,
+            'user_id' => $user
+        ], $multipart);
     }
 }

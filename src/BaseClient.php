@@ -7,6 +7,12 @@ use GuzzleHttp\Client;
 class BaseClient
 {
     /**
+     * API Version
+     * @var string
+     */
+    protected static $version = "v1";
+
+    /**
      * @var string
      */
     protected static $token;
@@ -33,7 +39,7 @@ class BaseClient
         }
         self::$token = $token;
 
-        $base_uri = [$host, 'api', 'v1', ''];
+        $base_uri = [$host, 'api', ''];
         $base_uri = implode('/', $base_uri);
 
         self::$client = new Client([
@@ -62,6 +68,12 @@ class BaseClient
      */
     protected function get(string $endpoint, array $query = [])
     {
+        $endpoint = [
+            self::$version,
+            $endpoint
+        ];
+        $endpoint = implode("/", $endpoint);
+
         $result = self::$client->get($endpoint, [
             'headers' => [
                 'Authorization' => 'Bearer ' . self::$token,
@@ -82,6 +94,12 @@ class BaseClient
      */
     protected function post(string $endpoint, array $body = [])
     {
+        $endpoint = [
+            self::$version,
+            $endpoint
+        ];
+        $endpoint = implode("/", $endpoint);
+
         $result = self::$client->post($endpoint, [
             'headers' => [
                 'Authorization' => 'Bearer ' . self::$token,
@@ -102,6 +120,12 @@ class BaseClient
      */
     protected function put(string $endpoint, array $body = [])
     {
+        $endpoint = [
+            self::$version,
+            $endpoint
+        ];
+        $endpoint = implode("/", $endpoint);
+
         $result = self::$client->put($endpoint, [
             'headers' => [
                 'Authorization' => 'Bearer ' . self::$token,
@@ -121,11 +145,43 @@ class BaseClient
      */
     protected function delete(string $endpoint)
     {
+        $endpoint = [
+            self::$version,
+            $endpoint
+        ];
+        $endpoint = implode("/", $endpoint);
+
         $result = self::$client->delete($endpoint, [
             'headers' => [
                 'Authorization' => 'Bearer ' . self::$token,
                 'Accept' => 'application/json'
             ]
+        ]);
+
+        $json = $result->getBody()->getContents();
+        return json_decode($json);
+    }
+
+    /**
+     * Method for uploading files to Papercups APIs
+     * @param string $endpoint
+     * @param array $body
+     * @param array $file
+     * @return mixed
+     */
+    protected function multipart(string $endpoint, array $body = [], array $file = [])
+    {
+        if (count($file) <= 0) {
+            return null;
+        }
+
+        $result = self::$client->post($endpoint, [
+            'headers' => [
+                'Authorization' => 'Bearer ' . self::$token,
+                'Accept' => 'application/json'
+            ],
+            'json' => $body,
+            'multipart' => $file
         ]);
 
         $json = $result->getBody()->getContents();
