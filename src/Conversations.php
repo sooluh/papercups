@@ -57,6 +57,19 @@ class Conversations extends BaseClient
     }
 
     /**
+     * Method to archive a conversation
+     * @param string $id
+     * @return mixed
+     */
+    public function archive(string $id)
+    {
+        $endpoint = ['conversations', $id, 'archive'];
+        $endpoint = implode('/', $endpoint);
+
+        return $this->post($endpoint);
+    }
+
+    /**
      * Method to delete a conversation
      * @param string $id
      * @return mixed
