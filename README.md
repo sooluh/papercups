@@ -9,7 +9,7 @@ Unofficial Papercups PHP library provides convenient access to the Papercups API
 
 ## Requirements
 
-- PHP > = 7.3
+- PHP >= 7.3
 - Composer
 
 ## Features
@@ -50,20 +50,6 @@ If you're self-hosting Papercups on a different server, you can specify the API 
 
 ```php
 $papercups = new \Papercups\Client('PAPERCUPS_API_KEY', 'https://papercups.mycompany.co');
-```
-
-## Useful Tools
-
-**Code Sniffer Tool**
-
-```sh
-composer psr2check
-```
-
-**Code Auto-fixer**
-
-```sh
-composer psr2autofix
 ```
 
 ## License
